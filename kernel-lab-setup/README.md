@@ -134,6 +134,8 @@ qemu-system-x86_64 -kernel $PATH_KERNEL/bzImage -initrd $MODE_INITRD -nographic 
 
 Para rodar com debug, basta acrescentar as flags "-s -S", mais detalhes na seção **QEMU**.
 
+Os comandos bash acima compilam apenas para a versão 6.1. Itere sobre o processo para criar para outras versões, lançamento e versão mais recentes, etc. Quanto mais repetir esse processo, mais familiar ele vai parecer e isso vai ser útil mais à frente.
+
 #### Hora de fazer escolhas
 Para início de conversa, vou assumir que a importância de criar seu próprio laboratório localmente é um ponto pacífico e vou pular essa discussão. Há algumas opções para construção de um laboratório para pesquisa em kernel exploits. As principais opções que consegui pensar na época de construção do lab foram:
 1. Virtualizar imagens de distribuições linux em virtualizadores como VirtualBox e VmWare.
@@ -401,7 +403,10 @@ Uma vez com os executáveis linux em mãos, o comprimido e o com símbolos, é h
 Para encerrar um emulador QEMU aberto há algumas opções. A mais limpa para mim é utilizar os atalhos `Ctrl+A` seguido de `x`. **Aviso:** ao fechar um emulador QEMU, muitas vezes meu terminal fica meio ruim de utilizar, por isso eu geralmente fecho-o e abro outro para seguir minhas atividades no host system.
 
 #### Considerações finais
-O processo pode ser repetido para compilar diferentes versões e a versão de lançamento de cada minor version. A primeira falha reproduzida após construção desse lab foi a cve-2022-0847. Lá consta, também, algumas dicas de como utilizar o gdb. Caso seja um iniciante como eu, recomendo começar por lá.
+O processo pode ser repetido para compilar diferentes versões e a versão de lançamento de cada minor version. Itere sobre o processo para criar para outras versões, lançamento e versão mais recentes, etc. Quanto mais repetir esse processo, mais familiar ele vai parecer e isso vai ser útil mais à frente.
+
+
+A primeira falha reproduzida após construção desse lab foi a cve-2022-0847. Lá consta, também, algumas dicas de como utilizar o gdb. Caso seja um iniciante como eu, recomendo começar por lá.
 
 + Referências:
     + [kernel.org/releases](https://www.kernel.org/category/releases.html)
