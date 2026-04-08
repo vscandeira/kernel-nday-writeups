@@ -7,7 +7,7 @@
 ## Versão em português
 
 #### TLDR
-Para pular toda a discussão, segue abaixo um quase script bash para rodar. A sugestão é rodar linha por linha, pois é mais um registro do passo a passo do que um script pensado para tornar o processo totalmente automático. A etapa de ajustes das flags, por exemplo, é feita via menuconfig. A sequência abaixo cria uma árvore de diretórios para o kernel_lab, clona o git do código fonte do kernel, compila, cria um initrd básico e roda via QEMU (sem debug) com compartilhamento de diretório.
+Para pular toda a discussão, segue abaixo um quase script bash. A sugestão é rodar linha por linha, pois é mais um registro do passo a passo do que um script pensado para tornar o processo totalmente automático. A etapa de ajustes das flags, por exemplo, é feita via menuconfig. A sequência abaixo cria uma árvore de diretórios para o kernel_lab, clona o git do código fonte do kernel, compila, cria um initrd básico e roda via QEMU (sem debug) com compartilhamento de diretório. Assume-se um host system linux.
 
 ```bash
 # as 4 linhas abaixo podem ser incluidas no ~/.bashrc para maior facilidade
@@ -135,7 +135,7 @@ qemu-system-x86_64 -kernel $PATH_KERNEL/bzImage -initrd $MODE_INITRD -nographic 
 Para rodar com debug, basta acrescentar as flags "-s -S", mais detalhes na seção **QEMU**.
 
 #### Hora de fazer escolhas
-Para início de conversa, vou assumir que a importância de criar seu próprio laboratório localmente é um ponto pacífico e vou pular essa discussão. Há algumas opções para construção de um laboratório para pesquisa em kernel exploits. As principais opções que consegui pensar na época de construção do lab são:
+Para início de conversa, vou assumir que a importância de criar seu próprio laboratório localmente é um ponto pacífico e vou pular essa discussão. Há algumas opções para construção de um laboratório para pesquisa em kernel exploits. As principais opções que consegui pensar na época de construção do lab foram:
 1. Virtualizar imagens de distribuições linux em virtualizadores como VirtualBox e VmWare.
 2. Compilar manualmente kernel linux, subir um initrd mínimo junto com o executável no QEMU.
 
@@ -149,7 +149,7 @@ Elenquei 3 versões de kernel em que queria focar: 5.10, 6.1 e 6.12. Todas elas 
 + **6.12**: versão com suporte do kernel.org até 12/2028 e suporte estendido pelo CIP até 06/2035. A ideia dessa versão é procurar por exploits mais recentes. Foco em aprender o que mais tem sido feito na pesquisa de kernel research atualmente.
 
 #### Organização de diretórios
-Como estou trabalhando com 3 versões de kernel diferentes, criei um diretório separado do fonte, kernel_lab e dentro dele criei as pastas para cada versão, uma pasta shared para arquivos compartilhados e duas pastas para initrd que cai no root e outra para um initrd que cai num user comum. A estrutura final ficou mais ou menos assim:
+Como estou trabalhando com 3 versões de kernel diferentes, criei um diretório separado do fonte, kernel_lab, e dentro dele criei as pastas para cada versão, uma pasta shared para arquivos compartilhados entre host e guest system e duas pastas para initrd que cai no root e outra para um initrd que cai num user comum. A estrutura final ficou mais ou menos assim:
 ```
 kernel_lab
 ├── 5.10
@@ -189,13 +189,13 @@ kernel_lab
 Você não precisa fazer o mesmo que eu. Mas se optar por seguir essa estrutura, as seções de comandos bash abaixo já criam essa estrutura. Caso opte por não segui-la, os comandos terão que ser adaptados.
 
 #### Código fonte do kernel linux
-Um vez que decidimos nosso caminho e nossas versões, mãos à obra :)
+Um vez que decidimos nosso caminho, nossa organização e nossas versões, mãos à obra :)
 
 Caso você seja um novato como eu, recomendo fortemente um pouco de leitura antes de partir pra ação:
 + [kernel.org - How the development proccess works](https://www.kernel.org/doc/html/latest/process/2.Process.html#how-the-development-process-works)
 + [kernel.org - CVE process](https://docs.kernel.org/process/cve.html)
 
-O git que nos interessa é o [git do próprio Linus](https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git), até hoje mantido diretamente por ele. O processo geral consiste em: clonar o git, selecionar a versão, utilizar o utilitário do make para editar as flags importantes para nós, compilar e por fim (opcional) salvar vmlinux e bzImage em pastas separadas. Caso você opte por seguir a mesma árvore de diretórios que eu, dê uma olhada na seção de organização de diretórios antes de seguir.
+O git que nos interessa é o [git do próprio Linus](https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git). O processo geral consiste em: clonar o git, selecionar a versão, utilizar o utilitário do make para editar as flags importantes para nós, compilar e salvar vmlinux e bzImage em pastas separadas.
 
 + Flags de interesse:
     + CONFIG_DEBUG_INFO_DWARF4=y
@@ -274,7 +274,7 @@ O git que nos interessa é o [git do próprio Linus](https://git.kernel.org/pub/
     cp .config $PATH_KERNEL/
     ```
 
-+ É importante ressaltar que para a versão 5.10, compilada com GCC-10, só consegui compilar subindo um docker com debian mais antigo e compilando de lá. `docker run --name kernel-builder -it -v ~/gits/linux:/src`
++ É importante ressaltar que para a versão 5.10, compilada com GCC-10, só consegui compilar subindo um docker com debian mais antigo e compilando de lá. `docker run --name kernel-builder -it -v ~/gits/linux:/src debian:bullseye bash`
     ```bash
     # Dentro do container, você instala as dependências:
     apt update && apt install -y build-essential gcc-10 libncurses-dev flex bison libssl-dev libelf-dev bc git
