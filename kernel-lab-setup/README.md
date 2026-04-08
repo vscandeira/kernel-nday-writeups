@@ -2,11 +2,11 @@
 
 ## English version
 
-#### TLDR
+### TLDR
 
 ## Versão em português
 
-#### TLDR
+### TLDR
 Para pular toda a discussão, segue abaixo um quase script bash. A sugestão é rodar linha por linha, pois é mais um registro do passo a passo do que um script pensado para tornar o processo totalmente automático. A etapa de ajustes das flags, por exemplo, é feita via menuconfig. A sequência abaixo cria uma árvore de diretórios para o kernel_lab, clona o git do código fonte do kernel, compila, cria um initrd básico e roda via QEMU (sem debug) com compartilhamento de diretório. Assume-se um host system linux.
 
 ```bash
@@ -136,7 +136,7 @@ Para rodar com debug, basta acrescentar as flags "-s -S", mais detalhes na seç�
 
 Os comandos bash acima compilam apenas para a versão 6.1. Itere sobre o processo para criar para outras versões, lançamento e versão mais recentes, etc. Quanto mais repetir esse processo, mais familiar ele vai parecer e isso vai ser útil mais à frente.
 
-#### Hora de fazer escolhas
+### Hora de fazer escolhas
 Para início de conversa, vou assumir que a importância de criar seu próprio laboratório localmente é um ponto pacífico e vou pular essa discussão. Há algumas opções para construção de um laboratório para pesquisa em kernel exploits. As principais opções que consegui pensar na época de construção do lab foram:
 1. Virtualizar imagens de distribuições linux em virtualizadores como VirtualBox e VmWare.
 2. Compilar manualmente kernel linux, subir um initrd mínimo junto com o executável no QEMU.
@@ -150,7 +150,7 @@ Elenquei 3 versões de kernel em que queria focar: 5.10, 6.1 e 6.12. Todas elas 
 + **6.1**: versão com suporte do kernel.org até 12/2027 e suporte estendido pelo CIP até 08/2033. Meio termo entre ambas as versões.
 + **6.12**: versão com suporte do kernel.org até 12/2028 e suporte estendido pelo CIP até 06/2035. A ideia dessa versão é procurar por exploits mais recentes. Foco em aprender o que mais tem sido feito na pesquisa de kernel research atualmente.
 
-#### Organização de diretórios
+### Organização de diretórios
 Como estou trabalhando com 3 versões de kernel diferentes, criei um diretório separado do fonte, kernel_lab, e dentro dele criei as pastas para cada versão, uma pasta shared para arquivos compartilhados entre host e guest system e duas pastas para initrd que cai no root e outra para um initrd que cai num user comum. A estrutura final ficou mais ou menos assim:
 ```
 kernel_lab
@@ -190,7 +190,7 @@ kernel_lab
 
 Você não precisa fazer o mesmo que eu. Mas se optar por seguir essa estrutura, as seções de comandos bash abaixo já criam essa estrutura. Caso opte por não segui-la, os comandos terão que ser adaptados.
 
-#### Código fonte do kernel linux
+### Código fonte do kernel linux
 Um vez que decidimos nosso caminho, nossa organização e nossas versões, mãos à obra :)
 
 Caso você seja um novato como eu, recomendo fortemente um pouco de leitura antes de partir pra ação:
@@ -300,7 +300,7 @@ O git que nos interessa é o [git do próprio Linus](https://git.kernel.org/pub/
     cp .config $PATH_KERNEL/
     ```
 
-#### Initrd basico
+### Initrd basico
 Nao vou discutir todas opções possiveis e imagináveis para se construir um initrd minimalista. Pedi ajuda para meu amigo LLM e ele me indicou utilizar o busybox e funcionou bem para os meus propósitos.
 + Um quase script para criar initrd root basico (comandos bash):
     ```bash
@@ -378,7 +378,7 @@ Nao vou discutir todas opções possiveis e imagináveis para se construir um in
     + root: `youcantguessme123!`
     + user: `test123`
 
-#### QEMU
+### QEMU
 Uma vez com os executáveis linux em mãos, o comprimido e o com símbolos, é hora de rodar com os comandos abaixo.
 + Um quase script (comandos bash para rodar):
     ```bash
@@ -402,16 +402,15 @@ Uma vez com os executáveis linux em mãos, o comprimido e o com símbolos, é h
 
 Para encerrar um emulador QEMU aberto há algumas opções. A mais limpa para mim é utilizar os atalhos `Ctrl+A` seguido de `x`. **Aviso:** ao fechar um emulador QEMU, muitas vezes meu terminal fica meio ruim de utilizar, por isso eu geralmente fecho-o e abro outro para seguir minhas atividades no host system.
 
-#### Considerações finais
+### Considerações finais
 O processo pode ser repetido para compilar diferentes versões e a versão de lançamento de cada minor version. Itere sobre o processo para criar para outras versões, lançamento e versão mais recentes, etc. Quanto mais repetir esse processo, mais familiar ele vai parecer e isso vai ser útil mais à frente.
-
 
 A primeira falha reproduzida após construção desse lab foi a cve-2022-0847. Lá consta, também, algumas dicas de como utilizar o gdb. Caso seja um iniciante como eu, recomendo começar por lá.
 
-+ Referências:
-    + [kernel.org/releases](https://www.kernel.org/category/releases.html)
-    + [kernel.org - How the development proccess works](https://www.kernel.org/doc/html/latest/process/2.Process.html#how-the-development-process-works)
-    + [kernel.org - CVE process](https://docs.kernel.org/process/cve.html)
-    + [CIP - Civil Infrastructure Platform - Kernel Maintainership](https://wiki.linuxfoundation.org/civilinfrastructureplatform/start#kernel_maintainership)
-    + [Linux Kernel Source Code](https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git)
+### Referências:
++ [kernel.org/releases](https://www.kernel.org/category/releases.html)
++ [kernel.org - How the development proccess works](https://www.kernel.org/doc/html/latest/process/2.Process.html#how-the-development-process-works)
++ [kernel.org - CVE process](https://docs.kernel.org/process/cve.html)
++ [CIP - Civil Infrastructure Platform - Kernel Maintainership](https://wiki.linuxfoundation.org/civilinfrastructureplatform/start#kernel_maintainership)
++ [Linux Kernel Source Code](https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git)
 
